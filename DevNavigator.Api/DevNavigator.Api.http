@@ -1,0 +1,6 @@
+@DevNavigator.Api_HostAddress = http://localhost:5044
+
+GET {{DevNavigator.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

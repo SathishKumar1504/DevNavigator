@@ -19,4 +19,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Indexer\" />
+    <Folder Include="Database\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>

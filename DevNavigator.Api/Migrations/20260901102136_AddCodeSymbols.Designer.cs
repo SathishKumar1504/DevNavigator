@@ -3,6 +3,7 @@ using System;
 using DevNavigator.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevNavigator.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260901102136_AddCodeSymbols")]
+    partial class AddCodeSymbols
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -43,61 +46,6 @@ namespace DevNavigator.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("CodeContents");
-                });
-
-            modelBuilder.Entity("DevNavigator.Api.Models.CodeSymbol", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("FileId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ImportPath")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("LineNumber")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SymbolType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId");
-
-                    b.ToTable("CodeSymbols");
-                });
-
-            modelBuilder.Entity("DevNavigator.Api.Models.CodeSymbolRelationship", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("FromSymbolId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("RelationshipType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ToSymbolId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromSymbolId");
-
-                    b.HasIndex("ToSymbolId");
-
-                    b.ToTable("CodeSymbolRelationships");
                 });
 
             modelBuilder.Entity("DevNavigator.Api.Models.FileMetadata", b =>
@@ -182,36 +130,6 @@ namespace DevNavigator.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("File");
-                });
-
-            modelBuilder.Entity("DevNavigator.Api.Models.CodeSymbol", b =>
-                {
-                    b.HasOne("DevNavigator.Api.Models.FileMetadata", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("File");
-                });
-
-            modelBuilder.Entity("DevNavigator.Api.Models.CodeSymbolRelationship", b =>
-                {
-                    b.HasOne("DevNavigator.Api.Models.CodeSymbol", "FromSymbol")
-                        .WithMany()
-                        .HasForeignKey("FromSymbolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DevNavigator.Api.Models.CodeSymbol", "ToSymbol")
-                        .WithMany()
-                        .HasForeignKey("ToSymbolId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FromSymbol");
-
-                    b.Navigation("ToSymbol");
                 });
 
             modelBuilder.Entity("DevNavigator.Api.Models.FileMetadata", b =>

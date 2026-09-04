@@ -1,30 +1,57 @@
 using DevNavigator.Api.Data;
+using DevNavigator.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevNavigatorWeb", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
-// Register SQLite DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=devnavigator.db"));
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddScoped<IIndexService, IndexService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<CodeSymbolExtractor>();
+builder.Services.AddScoped<CodeSymbolRelationshipBuilder>();
+builder.Services.AddScoped<ImportResolver>();
+builder.Services.AddScoped<ServiceNavigationService>();
+
+// Built-in OpenAPI
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Comment this for now
+// app.UseHttpsRedirection();
+
+app.UseCors("DevNavigatorWeb");
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/", () => new
+{
+    application = "DevNavigator AI",
+    status = "Running",
+    message = "Developer navigation API is running."
+});
 
 app.Run();
